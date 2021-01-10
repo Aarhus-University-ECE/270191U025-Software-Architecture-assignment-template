@@ -1,6 +1,7 @@
 #pragma once
+#include "queue.hpp"
 
-class QueueArray
+class QueueArray : public Queue
 {
 public:
     void enqueue(int value);

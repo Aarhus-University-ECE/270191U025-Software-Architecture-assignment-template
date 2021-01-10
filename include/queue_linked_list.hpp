@@ -1,6 +1,7 @@
 #pragma once
+#include "queue.hpp"
 
-class QueueLinkedList
+class QueueLinkedList : public Queue
 {
     struct Node // struct can be defined internally to avoid exposing internals
     {
