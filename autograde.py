@@ -78,18 +78,16 @@ def run_unittests() -> float:
         return fraction_passed
 
 
+def run_memcheck() -> bool:
+    with cd(Path("build")):
+        return Popen(["ctest", "--verbose", "-T", "memcheck"]).wait() == 0
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         "autograde",
         description="Utility program for grading code handins based on unit-tests and static analysis.",
-    )
-
-    parser.add_argument(
-        "--unittest",
-        action="store_true",
-        default=True,
-        help="run unit test against compiled program",
     )
 
     args = parser.parse_args()
@@ -107,11 +105,14 @@ if __name__ == "__main__":
 
     test_passed_fraction = 0
 
-    if args.unittest:
-        logger.info("Running unittests")
-        fraction_ok = run_unittests()
-        logger.debug(f"Finished running unittests, {fraction_ok*100}% passed")
+    logger.info("Running unittests")
+    fraction_ok = run_unittests()
+    logger.debug(f"Finished running unittests, {fraction_ok*100}% passed")
 
-    grade, report = grade(test_passed_fraction, False, False)
+    logger.info("Running Memory Checker")
+    mem_check_passed = run_memcheck()
+    logger.debug(f"Finished running unittests, {fraction_ok*100}% passed")
+
+    grade, report = grade(test_passed_fraction, mem_check_passed, False)
 
     logger.info(report)
