@@ -1,10 +1,9 @@
 import argparse
 from os import makedirs
 from pathlib import Path
-from subprocess import CalledProcessError, Popen, PIPE
+from subprocess import Popen, PIPE
 import logging
 import os
-import subprocess
 from typing import Tuple
 import re
 
