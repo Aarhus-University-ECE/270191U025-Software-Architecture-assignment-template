@@ -1,6 +1,6 @@
 # 270191U025-Software-Architecture-assignment-template
 
-## ONLY FOR TEACHERS (REMOVE THIS FROM ASSIGNMENT)
+## Meta Information To Instructors (REMOVE THIS FROM ASSIGNMENT)
 
 This repository contains a template for C++ based assignements in the 'Software Architecture' course.
 The template provides a CMake-based build system that makes it easy that makes it easy to build and test the students code.
@@ -20,12 +20,38 @@ The md5 checksum should be: `3fb245f0f15bf8b4aeb34e9b5adc1289` -- if it is not t
 
 In this exercise you will:
 
-1. Install Git and learn how to clone a repository
-2. Define an interface to a stack using an abstract class in C++, and create an implementation based on:
-   - array
-   - linked list
-3. Test your implementation against test suite
-4. Submit your assignment using Git
+1. [Preliminaries; Installing Dependencies](#Dependencies)
+2. [Install and familiarize yourself with Git](#Familiarize-youself-with-Git)
+3. [Examine the Repository Template](#Repository-Structure)
+4. [Automatic Grading](#Test-Suite-and-Grading)
+5. [Correct Code]()
+6. [Run Automatic Grading Script]()
+
+### Dependencies
+
+The project template and associated script dependes on the following programs being installed and added to your systems path variable.
+In practical terms this means that the program can be located from the command line.
+The easiest way to check whether a program is in the systems path is to attempt launching it from the command line.
+
+For example to check if the python interpreter is installed:
+
+```bash
+python
+```
+
+Make sure the following programs are installed and can be accessed from the systems path:
+
+- C/C++ compiler such as [gcc](https://gcc.gnu.org/), [msvc](https://visualstudio.microsoft.com/vs/features/cplusplus/) or [clang](https://clang.llvm.org/)
+- [CMake](https://cmake.org/)
+- [Python](https://www.python.org/)
+- [Git](https://git-scm.com/downloads)
+
+You may install an CMake integration in VSCode that makes it easier to build and debug you code.
+The 'CMake' and 'CMake Tools' are recommended.
+
+![](cmake.png)
+
+**There are many ways to install these and often the preferred way depends on the particular OS. The most general advice is reading the install instructions found at their respective webpages.**
 
 ### Familiarize youself with Git
 
@@ -39,17 +65,11 @@ There are countless guides online on how to install and use Git, one of them bei
 
 - [Video](https://www.youtube.com/watch?v=SWYqp7iY_Tc)
 
-Clone the repository and code away :)
+Clone the repository and code away. Focus on the basic commands: `clone`, `commit`, `pull`, and `push`.
 
 ### Repository Structure
 
-For each handin you are provided a set of files that help you get started with the assignment.
-These serve as a template for the assignment.
-
-The two directories are:
-
-1. include: Contains C++ header files
-2. src: include C++ source files
+For assignment you are provided a set of files that help you get started with the assignment.
 
 The files are:
 
@@ -57,12 +77,71 @@ The files are:
 2. autograde.py: python script for building and grading your submission
 3. .gitignore: defines which types of files should not be tracked by Git
 
-### Install VSCode CMake integration (Optional)
+Source and header files are stored in the respective folders:
 
-You may install an integration in VSCode that makes it easier to build and debug you code.
-The 'CMake' and 'CMake Tools' are recommended.
+1. include: Contains C++ header files
+2. src: include C++ source files
 
-![](cmake.png)
+### Test-Suite and Grading
+
+A central goal of this course is to improve your ability to write high quality and 'correct' code. Part of this effort is an increased emphasis on systematic testing.
+
+For each exercise you are provided a set of unit tests as part of the handout that can be run to verify which parts of your code works and which parts do not. To test your code run the `autograde.py` script using python:
+
+```bash
+> python autograde.py
+...
+
+1: Test command: C:\Users\clega\Desktop\repos\270191U025-Software-Architecture-assignment-template\build\Debug\tests.exe
+1: Test timeout computed to be: 10000000
+1:
+1: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1: tests.exe is a Catch v2.13.4 host application.
+1: Run with -? for options
+1:
+1: -------------------------------------------------------------------------------
+1: Addition
+1:   0 + 1 is 1
+1: -------------------------------------------------------------------------------
+1: C:\Users\clega\Desktop\repos\270191U025-Software-Architecture-assignment-template\src\tests.cpp(16)
+1: ...............................................................................
+1:
+1: C:\Users\clega\Desktop\repos\270191U025-Software-Architecture-assignment-template\src\tests.cpp(18): FAILED:
+1:   REQUIRE( sum(0, 1) )
+1: with expansion:
+1:   0
+1:
+1: ===============================================================================
+1: test cases: 1 | 1 failed
+1: assertions: 2 | 1 passed | 1 failed
+1:
+1/1 Test #1: usage_test .......................***Failed    0.02 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.02 sec
+
+The following tests FAILED:
+          1 - usage_test (Failed)
+
+INFO:.\autograde.py:Running Memory Checker
+UpdateCTestConfiguration  from :C:/Users/clega/Desktop/repos/270191U025-Software-Architecture-assignment-template/build/DartConfiguration.tcl
+Cannot find file: C:/Users/clega/Desktop/repos/270191U025-Software-Architecture-assignment-template/build/DartConfiguration.tcl
+   Site:
+   Build name: (empty)
+UpdateCTestConfiguration  from :C:/Users/clega/Desktop/repos/270191U025-Software-Architecture-assignment-template/build/DartConfiguration.tcl
+Cannot find file: C:/Users/clega/Desktop/repos/270191U025-Software-Architecture-assignment-template/build/DartConfiguration.tcl
+Memory check project C:/Users/clega/Desktop/repos/270191U025-Software-Architecture-assignment-template/build
+Memory checker (MemoryCheckCommand) not set, or cannot find the specified program.
+Errors while running CTest
+INFO:.\autograde.py:
+#######################################################################################################
+Final grade is: 0
+
+grade = test_passed_fraction* 70 + memory_check_passed * 20 + static_analysis_passed * 10
+0 = 0% * 70 + False * 20 + False * 10
+#######################################################################################################
+```
 
 ### Implementing an abstract class
 
@@ -84,23 +163,5 @@ public:
 2. Implement the class using an integer array, see `queue_array.hpp`.
 
 3. Implement the class using an integer list, see `queue_linked_list.hpp`.
-
-### Running Tests and Grading
-
-Your grade is based on your code passing the provided tests.
-You can run the test by running the following command in the root of your project:
-
-```bash
-python autograde.py
-
-...
-INFO:.\autograde.py:
-#######################################################################################################
-Final grade is: 0
-
-grade = test_passed_fraction* 70 + memory_check_passed * 20 + static_analysis_passed * 10
-0 = 0% * 70 + False * 20 + False * 10
-#######################################################################################################
-```
 
 **Do not modify the script in any way, a checksum is used to check the integrity of the file. Incorrect checksum ⟹ no pass.**
