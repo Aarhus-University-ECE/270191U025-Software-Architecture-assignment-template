@@ -1,4 +1,7 @@
+#include <stdlib.h>
+
 int sum(int a, int b)
 {
-    return a + b;
+    int* leak = (int*)malloc(sizeof(int));
+    return a;
 }

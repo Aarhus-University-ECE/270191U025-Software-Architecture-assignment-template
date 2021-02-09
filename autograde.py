@@ -36,16 +36,6 @@ class cd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
-
-def grade(
-    test_passed_fraction: float,
-    memory_check_status: ToolStatus,
-    static_analysis_status: ToolStatus,
-) -> Tuple[int, str]:
-
-    return grade, report
-
-
 def cmd_exists(cmd):
     return which(cmd) is not None
 
@@ -125,18 +115,24 @@ if __name__ == "__main__":
     ################### MEMORY CHECKER #########################
     logger.info("Running Memory Checker")
     try:
-        expr = r"Memory checker \(MemoryCheckCommand\) not set, or cannot find the specified program\."
-        result = subprocess.run(
-            ["ctest", "--verbose", "-T", "memcheck"], stderr=subprocess.PIPE
-        )
-        print(result.stderr.decode())
-
-        if re.findall(expr, result.stderr.decode()):
-            mem_check_status = ToolStatus.NOT_FOUND
-        else:
-            mem_check_status = (
-                ToolStatus.PASSED if result.returncode == 0 else ToolStatus.FAILED
+        not_found_pattern = r"Memory checker \(MemoryCheckCommand\) not set, or cannot find the specified program\."
+        leaks_pattern = r"Memory Leak - ([0-9]+)"
+        with cd(build_path):
+            
+            result = subprocess.run(
+                ["ctest", "--verbose", "-T", "memcheck"], stderr=PIPE, stdout=PIPE
             )
+            sys.stderr.write(result.stderr.decode())
+            sys.stdout.write(result.stdout.decode())
+
+            if re.findall(not_found_pattern, result.stderr.decode()):
+                mem_check_status = ToolStatus.NOT_FOUND
+            else:
+                leaks = re.findall(leaks_pattern,result.stdout.decode())
+                leaks = leaks[0] if leaks else 0
+                mem_check_status = (
+                    ToolStatus.PASSED if leaks == 0 else ToolStatus.FAILED
+                )
 
     except Exception:
         mem_check_status = ToolStatus.FATAL

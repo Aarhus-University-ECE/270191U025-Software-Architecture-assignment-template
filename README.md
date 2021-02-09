@@ -43,15 +43,16 @@ Make sure the following programs are installed and can be accessed from the syst
 
 - C/C++ compiler such as [gcc](https://gcc.gnu.org/), [msvc](https://visualstudio.microsoft.com/vs/features/cplusplus/) or [clang](https://clang.llvm.org/)
 - [CMake](https://cmake.org/)
-- [Clang-Tidy](https://clang.llvm.org/extra/clang-tidy/)
-- [CppCheck](http://cppcheck.sourceforge.net/)
 - [Python](https://www.python.org/)
 - [Git](https://git-scm.com/downloads)
+- [Clang-Tidy*](https://clang.llvm.org/extra/clang-tidy/)
+- [CppCheck*](http://cppcheck.sourceforge.net/)
+- [Valgrind*](https://valgrind.org/)
 
 On Ubuntu you can install these using:
 
 ```
-sudo apt install build-essential clang-tidy cppcheck python3 git
+sudo apt install build-essential cmake python3 git clang-tidy cppcheck python3
 ```
 
 You may install an CMake integration in VSCode that makes it easier to build and debug you code.

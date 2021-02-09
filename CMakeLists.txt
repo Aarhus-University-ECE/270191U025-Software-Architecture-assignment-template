@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(template)
+# include (CTest)
+
 
 
 # make compilers strict, comment these in, if you believe your code is bullet proof!
