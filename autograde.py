@@ -5,7 +5,7 @@ from subprocess import PIPE
 import logging
 import os
 import subprocess
-from typing import Tuple
+from typing import Any, Tuple
 from shutil import which
 import re
 import sys
@@ -14,8 +14,6 @@ from enum import Enum
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__file__)
-
-
 
 
 class ToolStatus(Enum):
@@ -35,6 +33,7 @@ class cd:
 
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
+
 
 def cmd_exists(cmd):
     return which(cmd) is not None
@@ -64,7 +63,7 @@ if __name__ == "__main__":
         makedirs(build_path, exist_ok=True)
 
         with cd(build_path):
-            if subprocess.run(["cmake", "configure", ".."]).returncode != 0:
+            if subprocess.run(["cmake", ".."]).returncode != 0:
                 logger.error("Unable to configure CMake project")
                 sys.exit(1)
 
@@ -118,7 +117,7 @@ if __name__ == "__main__":
         not_found_pattern = r"Memory checker \(MemoryCheckCommand\) not set, or cannot find the specified program\."
         leaks_pattern = r"Memory Leak - ([0-9]+)"
         with cd(build_path):
-            
+
             result = subprocess.run(
                 ["ctest", "--verbose", "-T", "memcheck"], stderr=PIPE, stdout=PIPE
             )
@@ -128,7 +127,7 @@ if __name__ == "__main__":
             if re.findall(not_found_pattern, result.stderr.decode()):
                 mem_check_status = ToolStatus.NOT_FOUND
             else:
-                leaks = re.findall(leaks_pattern,result.stdout.decode())
+                leaks = re.findall(leaks_pattern, result.stdout.decode())
                 leaks = leaks[0] if leaks else 0
                 mem_check_status = (
                     ToolStatus.PASSED if leaks == 0 else ToolStatus.FAILED
@@ -153,12 +152,12 @@ if __name__ == "__main__":
     #         ,["-checks=*"]
     #     ),
     # ]
-    
+
     # checker_results = []
     # from glob import glob
     # source_files = glob("src/**.cpp")
     # header_files = glob("include/**.hpp")
-    
+
     # all_files = source_files + header_files
     # whitelist = [] #["include/catch.hpp"]
     # for item in whitelist:
@@ -168,14 +167,13 @@ if __name__ == "__main__":
     #     pattern = f"{key}:(STRING|PATH|BOOL)=(ON|OFF)"
     #     result = subprocess.run(["cmake","-L","-N",cache_dir],stdout=PIPE)
     #     t,value = re.findall(pattern,result.stdout.decode(),re.DOTALL)[0]
-    
-    #     return value    
 
+    #     return value
 
     # for cmd, options in checkers:
     #     logger.info(f"Running static analysis tool: {cmd} on {all_files}")
     #     if cmd_exists(cmd):
-            
+
     #         result = subprocess.run([cmd] + all_files)
 
     #         checker_results.append(
@@ -200,6 +198,16 @@ if __name__ == "__main__":
     if cppcheck_status == ToolStatus.PASSED:
         grade += 10
 
+    missing_tool_message = (
+        "Note: One or more tools could not be located. These will be run by the server during grading. "
+        "To see the results yourself install the tools on you local machine and add them to your system path."
+        if any(
+            tool == ToolStatus.NOT_FOUND
+            for tool in [mem_check_status, clang_tidy_status, mem_check_status]
+        )
+        else ""
+    )
+
     report = f"""
 #######################################################################################################
 
@@ -214,6 +222,7 @@ grade = test_passed_fraction * 70 + memory_check_passed * 20 + static_analysis_p
 
 Final grade is: {grade}
 
+{missing_tool_message}
 #######################################################################################################
 """
 
